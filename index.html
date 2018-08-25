@@ -14,6 +14,9 @@
     }
 </style>
 <body>
+    <div>x: <span id="coord_x"></span></div>
+    <div>y: <span id="coord_y"></span></div>
+
     <canvas id="game" width="480" height="320"></canvas>
 
     <script>
@@ -22,9 +25,16 @@
 
         const CONFIG = {
             START_X: canvas.width / 2,
-            START_Y: canvas.height -10,
+            START_Y: canvas.height - 10,
             STEP: 5,
+            BALL_RADIUS: 10,
         };
+
+        let x = CONFIG.START_X;
+        let y = CONFIG.START_Y;
+        let dx = CONFIG.STEP;
+        let dy = -CONFIG.STEP;
+        let color = '#ff0000';
 
         ctx.beginPath();
         ctx.rect(20, 40, 100, 100);
@@ -38,29 +48,43 @@
         ctx.stroke();
         ctx.closePath();
 
-        function createBall(x, y) {
+        function createBall(x, y, color) {
             ctx.beginPath();
-            ctx.arc(x, y, 10, 0, Math.PI*2, false);
-            ctx.fillStyle = "green";
+            ctx.arc(x, y, CONFIG.BALL_RADIUS, 0, Math.PI*2, false);
+            ctx.fillStyle = color;
             ctx.fill();
             ctx.closePath();
         }
 
         function draw (timestamp) {
-            let dx = timestamp / CONFIG.STEP;
-            let dy = -timestamp / CONFIG.STEP;
-
-            let x = CONFIG.START_X + dx;
-            let y = CONFIG.START_Y + dy;
-            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            createBall(x, y);
+            createBall(x, y, color);
 
-            if (y > 85) {
-                requestAnimationFrame(draw)
+            if (y + dy > canvas.height - CONFIG.BALL_RADIUS || y + dy < CONFIG.BALL_RADIUS) {
+                dy = -dy;
+                color = '#00ff00';
             }
 
+            if (x + dx > canvas.width - CONFIG.BALL_RADIUS || x + dx < CONFIG.BALL_RADIUS) {
+                dx = -dx;
+                color = '#0000ff';
+            }
+
+            x += dx;
+            y += dy;
+
+            requestAnimationFrame(draw);
+
+            outputCoord({ x, y });
             console.log('render');
+        }
+
+        function outputCoord (coord) {
+            const containerX = document.getElementById('coord_x');
+            const containerY = document.getElementById('coord_y');
+
+            containerX.innerHTML = coord.x;
+            containerY.innerHTML = coord.y;
         }
 
         requestAnimationFrame(draw);
