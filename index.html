@@ -6,7 +6,88 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
+<style>
+    #game {
+        margin: 0 auto;
+        display: block;
+        border: 1px solid #eee;
+    }
+</style>
 <body>
-    <h1>Hello world!</h1>
+    <div>x: <span id="coord_x"></span></div>
+    <div>y: <span id="coord_y"></span></div>
+
+    <canvas id="game" width="480" height="320"></canvas>
+
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+
+        const CONFIG = {
+            START_X: canvas.width / 2,
+            START_Y: canvas.height - 10,
+            STEP: 5,
+            BALL_RADIUS: 10,
+        };
+
+        let x = CONFIG.START_X;
+        let y = CONFIG.START_Y;
+        let dx = CONFIG.STEP;
+        let dy = -CONFIG.STEP;
+        let color = '#ff0000';
+
+        ctx.beginPath();
+        ctx.rect(20, 40, 100, 100);
+        ctx.fillStyle = "#FF0000";
+        ctx.fill();
+        ctx.closePath();        
+
+        ctx.beginPath();
+        ctx.rect(160, 10, 100, 40);
+        ctx.strokeStyle = "rgba(0, 0, 255, 0.5)";
+        ctx.stroke();
+        ctx.closePath();
+
+        function createBall(x, y, color) {
+            ctx.beginPath();
+            ctx.arc(x, y, CONFIG.BALL_RADIUS, 0, Math.PI*2, false);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function draw (timestamp) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            createBall(x, y, color);
+
+            if (y + dy > canvas.height - CONFIG.BALL_RADIUS || y + dy < CONFIG.BALL_RADIUS) {
+                dy = -dy;
+                color = '#00ff00';
+            }
+
+            if (x + dx > canvas.width - CONFIG.BALL_RADIUS || x + dx < CONFIG.BALL_RADIUS) {
+                dx = -dx;
+                color = '#0000ff';
+            }
+
+            x += dx;
+            y += dy;
+
+            requestAnimationFrame(draw);
+
+            outputCoord({ x, y });
+            console.log('render');
+        }
+
+        function outputCoord (coord) {
+            const containerX = document.getElementById('coord_x');
+            const containerY = document.getElementById('coord_y');
+
+            containerX.innerHTML = coord.x;
+            containerY.innerHTML = coord.y;
+        }
+
+        requestAnimationFrame(draw);
+    </script>
 </body>
 </html>
