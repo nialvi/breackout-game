@@ -36,6 +36,14 @@
         let dy = -CONFIG.STEP;
         let color = '#ff0000';
 
+        let paddleHeight = 10;
+        let paddleWidth = 75;
+        let paddleX = (canvas.width-paddleWidth)/2;
+
+        let rightPressed = false;
+        let leftPressed = false;
+
+
         ctx.beginPath();
         ctx.rect(20, 40, 100, 100);
         ctx.fillStyle = "#FF0000";
@@ -56,9 +64,18 @@
             ctx.closePath();
         }
 
+        function drawPaddle () {
+            ctx.beginPath();
+            ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+            ctx.fillStyle = '#00ff00';
+            ctx.fill();
+            ctx.closePath();
+        }
+
         function draw (timestamp) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             createBall(x, y, color);
+            drawPaddle();
 
             if (y + dy > canvas.height - CONFIG.BALL_RADIUS || y + dy < CONFIG.BALL_RADIUS) {
                 dy = -dy;
@@ -70,13 +87,19 @@
                 color = '#0000ff';
             }
 
+            if (rightPressed && paddleX < canvas.width - paddleWidth) {
+                paddleX += 7;
+            } else if (leftPressed && paddleX > 0) {
+                paddleX -= 7;
+            }
+
             x += dx;
             y += dy;
 
             requestAnimationFrame(draw);
 
             outputCoord({ x, y });
-            console.log('render');
+            //console.log('render');
         }
 
         function outputCoord (coord) {
@@ -87,7 +110,29 @@
             containerY.innerHTML = coord.y;
         }
 
+        function handleKeyUp (e) {
+            if(e.keyCode === 39) {
+                rightPressed = false;
+            } else if (e.keyCode === 37) {
+                leftPressed = false;
+            }
+        }
+
+        function handleKeyDown (e) {
+            if(e.keyCode === 39) {
+                rightPressed = true;
+            } else if (e.keyCode === 37) {
+                leftPressed = true;
+            }
+        }
+
+        function initEvents () {
+            document.addEventListener('keyup', handleKeyUp, false);
+            document.addEventListener('keydown', handleKeyDown, false);
+        }
+
         requestAnimationFrame(draw);
+        initEvents();
     </script>
 </body>
 </html>
