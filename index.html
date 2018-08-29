@@ -77,14 +77,21 @@
             createBall(x, y, color);
             drawPaddle();
 
-            if (y + dy > canvas.height - CONFIG.BALL_RADIUS || y + dy < CONFIG.BALL_RADIUS) {
-                dy = -dy;
-                color = '#00ff00';
+            if(x + dx > canvas.width-CONFIG.BALL_RADIUS || x + dx < CONFIG.BALL_RADIUS) {
+                dx = -dx;
             }
 
-            if (x + dx > canvas.width - CONFIG.BALL_RADIUS || x + dx < CONFIG.BALL_RADIUS) {
-                dx = -dx;
-                color = '#0000ff';
+            if(y + dy < CONFIG.BALL_RADIUS) {
+                dy = -dy;
+            }
+            else if(y + dy > canvas.height-CONFIG.BALL_RADIUS) {
+                if(x > paddleX && x < paddleX + CONFIG.BALL_RADIUS) {
+                    dy = -dy;
+                }
+                else {
+                    alert("GAME OVER");
+                    document.location.reload();
+                }
             }
 
             if (rightPressed && paddleX < canvas.width - paddleWidth) {
