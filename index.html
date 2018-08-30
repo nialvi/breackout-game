@@ -85,7 +85,7 @@
                 dy = -dy;
             }
             else if(y + dy > canvas.height-CONFIG.BALL_RADIUS) {
-                if(x > paddleX && x < paddleX + CONFIG.BALL_RADIUS) {
+                if(x > paddleX && x < paddleX + paddleWidth) {
                     dy = -dy;
                 }
                 else {
