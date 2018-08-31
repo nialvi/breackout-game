@@ -19,6 +19,8 @@
 
     <canvas id="game" width="480" height="320"></canvas>
 
+    <h1 id="result" style="text-align: center;"></h1>
+
     <script>
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
@@ -45,16 +47,16 @@
 
         var brickRowCount = 3;
         var brickColumnCount = 5;
-        var brickWidth = 75;
+        var brickWidth = 80;
         var brickHeight = 20;
         var brickPadding = 10;
         var brickOffsetTop = 30;
-        var brickOffsetLeft = 30;
+        var brickOffsetLeft = 15;
         var bricks = [];
         for(var c=0; c<brickColumnCount; c++) {
             bricks[c] = [];
             for(var r=0; r<brickRowCount; r++) {
-                bricks[c][r] = { x: 0, y: 0 };
+                bricks[c][r] = { x: 0, y: 0, status: 1 };
             }
         }
 
@@ -77,16 +79,18 @@
         function drawBricks() {
             for(var c=0; c<brickColumnCount; c++) {
                 for(var r=0; r<brickRowCount; r++) {
-                    var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-                    var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop; 
+                    if (bricks[c][r].status === 1) {
+                        var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+                        var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop; 
 
-                    bricks[c][r].x = brickX;
-                    bricks[c][r].y = brickY;
-                    ctx.beginPath();
-                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                    ctx.fillStyle = "#0095DD";
-                    ctx.fill();
-                    ctx.closePath();
+                        bricks[c][r].x = brickX;
+                        bricks[c][r].y = brickY;
+                        ctx.beginPath();
+                        ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                        ctx.fillStyle = "#0095DD";
+                        ctx.fill();
+                        ctx.closePath();
+                    }
                 }
             }
         }
@@ -100,6 +104,7 @@
 
             createBall(x, y, color);
             drawPaddle();
+            collisionDetection();
 
             if(x + dx > canvas.width-CONFIG.BALL_RADIUS || x + dx < CONFIG.BALL_RADIUS) {
                 dx = -dx;
@@ -113,8 +118,10 @@
                     dy = -dy;
                 }
                 else {
-                    alert("GAME OVER");
-                    document.location.reload();
+                    outputResult();
+                    sleep(1000).then(() => {
+                        document.location.reload();
+                    });
                 }
             }
 
@@ -141,6 +148,11 @@
             containerY.innerHTML = coord.y;
         }
 
+        function outputResult () {
+            const containerResult = document.getElementById('result');
+            containerResult.innerHTML = 'GAME OVER';
+        }
+
         function handleKeyUp (e) {
             if(e.keyCode === 39) {
                 rightPressed = false;
@@ -160,6 +172,24 @@
         function initEvents () {
             document.addEventListener('keyup', handleKeyUp, false);
             document.addEventListener('keydown', handleKeyDown, false);
+        }
+
+        function collisionDetection () {
+            for(var c=0; c<brickColumnCount; c++) {
+                for(var r=0; r<brickRowCount; r++) {
+                    let b = bricks[c][r];
+                    if (b.status === 1) {
+                        if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                            dy = -dy;
+                            b.status = 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        function sleep(ms) {
+           return new Promise(resolve => setTimeout(resolve, ms));
         }
 
         requestAnimationFrame(draw);
