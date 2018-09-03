@@ -53,6 +53,9 @@
         var brickOffsetTop = 30;
         var brickOffsetLeft = 15;
         var bricks = [];
+
+        let score = 0;
+
         for(var c=0; c<brickColumnCount; c++) {
             bricks[c] = [];
             for(var r=0; r<brickRowCount; r++) {
@@ -100,11 +103,10 @@
             
 
             drawBricks();
-
-
             createBall(x, y, color);
             drawPaddle();
             collisionDetection();
+            drawScore();
 
             if(x + dx > canvas.width-CONFIG.BALL_RADIUS || x + dx < CONFIG.BALL_RADIUS) {
                 dx = -dx;
@@ -118,7 +120,7 @@
                     dy = -dy;
                 }
                 else {
-                    outputResult();
+                    outputResult('GAME OVER');
                     sleep(1000).then(() => {
                         document.location.reload();
                     });
@@ -148,9 +150,9 @@
             containerY.innerHTML = coord.y;
         }
 
-        function outputResult () {
+        function outputResult (text) {
             const containerResult = document.getElementById('result');
-            containerResult.innerHTML = 'GAME OVER';
+            containerResult.innerHTML = text;
         }
 
         function handleKeyUp (e) {
@@ -182,6 +184,14 @@
                         if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                             dy = -dy;
                             b.status = 0;
+                            score++;
+
+                            if (score === brickRowCount * brickColumnCount) {
+                                outputResult('YOU WIN!');
+                                sleep(1000).then(() => {
+                                    document.location.reload();
+                                });
+                            }
                         }
                     }
                 }
@@ -190,6 +200,12 @@
 
         function sleep(ms) {
            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function drawScore () {
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#0095DD';
+            ctx.fillText('Score: ' + score, 8, 20);
         }
 
         requestAnimationFrame(draw);
