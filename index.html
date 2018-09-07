@@ -27,8 +27,8 @@
 
         const CONFIG = {
             START_X: canvas.width / 2,
-            START_Y: canvas.height - 10,
-            STEP: 5,
+            START_Y: canvas.height - 15,
+            STEP: 1,
             BALL_RADIUS: 10,
         };
 
@@ -96,6 +96,8 @@
                     }
                 }
             }
+
+            // console.log(bricks);
         }
 
         function draw (timestamp) {
@@ -115,7 +117,7 @@
             if(y + dy < CONFIG.BALL_RADIUS) {
                 dy = -dy;
             }
-            else if(y + dy > canvas.height-CONFIG.BALL_RADIUS) {
+            else if(y + dy > canvas.height - paddleHeight - (CONFIG.BALL_RADIUS / 2)) {
                 if(x > paddleX && x < paddleX + paddleWidth) {
                     dy = -dy;
                 }
@@ -181,7 +183,7 @@
                 for(var r=0; r<brickRowCount; r++) {
                     let b = bricks[c][r];
                     if (b.status === 1) {
-                        if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                        if (x > b.x && x < b.x + brickWidth - CONFIG.BALL_RADIUS && y > b.y && y < b.y + brickHeight + CONFIG.BALL_RADIUS) {
                             dy = -dy;
                             b.status = 0;
                             score++;
