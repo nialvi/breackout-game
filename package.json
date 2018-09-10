@@ -1,0 +1,33 @@
+{
+  "name": "pet-project",
+  "version": "1.0.0",
+  "description": "🐶",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf ./dist && webpack --mode=production",
+    "build:dev": "rm -rf ./dist && webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nialvi/pet-project.git"
+  },
+  "author": "Nikolaev Viktor <maclauddd@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nialvi/pet-project/issues"
+  },
+  "homepage": "https://github.com/nialvi/pet-project#readme",
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.2",
+    "webpack": "^4.16.5",
+    "webpack-cli": "^3.1.0"
+  },
+  "dependencies": {
+    "react": "^16.5.0",
+    "react-dom": "^16.5.0"
+  }
+}
